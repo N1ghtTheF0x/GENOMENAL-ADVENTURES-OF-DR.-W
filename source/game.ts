@@ -18,7 +18,8 @@ class Game
     #lastTime: number = 0
     #currentTime: number = 0
 
-    currentState?: State = new State.Test()
+    #currentState?: State = new State.Test()
+    get currentState() {return this.#currentState}
 
     showFps: boolean = false
     private constructor()
@@ -62,11 +63,17 @@ class Game
             state.input(this)
             state.update(this)
             state.draw(this)
-            if(this.showFps)
-            {
-                document.title = `FPS: ${this.fps | 0}`
-            }
+            if(this.showFps) document.title = `FPS: ${this.fps | 0}`
         }
+    }
+    loadState<S extends State>(State: new () => S,init = true)
+    {
+        const state: S = new State()
+        if(init) 
+        {
+            if(!state.init(this)) throw new Error(`Couldn't load ${State.name}!`)
+        }
+        this.#currentState = state
     }
 }
 

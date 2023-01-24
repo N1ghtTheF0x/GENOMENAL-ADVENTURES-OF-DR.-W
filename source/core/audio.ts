@@ -1,4 +1,4 @@
-class EAudio
+class NAudio
 {
     static create(source: string,loop: boolean = false)
     {
@@ -25,7 +25,7 @@ class EAudio
     }
     async play()
     {
-        if(EAudio.MUTE) return
+        if(NAudio.MUTE) return
 
         await this.#checkAutoPlay()
 
@@ -50,4 +50,4 @@ class EAudio
     }
 }
 
-export default EAudio
+export default NAudio

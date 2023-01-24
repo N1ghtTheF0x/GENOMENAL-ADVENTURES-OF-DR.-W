@@ -4,6 +4,7 @@ import { Vector2 } from "./math";
 
 abstract class State
 {
+    abstract init(game: Game): boolean
     abstract update(game: Game): void
     abstract input(game: Game): void
     abstract draw(game: Game): void
@@ -24,6 +25,10 @@ namespace State
 
         rotUp = false
         rotDown = false
+        init()
+        {
+            return true
+        }
         update(game: Game): void 
         {
             if(this.up) this.pos.y -= game.delta * this.speed

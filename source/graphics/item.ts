@@ -33,14 +33,12 @@ abstract class CanvasItem
 
 namespace CanvasItem
 {
-    export type ModeStyle = {
-        "fill": CanvasRenderingContext2D["fillStyle"]
-        "stroke": CanvasRenderingContext2D["strokeStyle"]
-    }
+    export type Style = CanvasRenderingContext2D["fillStyle"] | CanvasRenderingContext2D["strokeStyle"]
+    export type Mode = "fill" | "stroke"
 
-    export class Rectangle<M extends keyof ModeStyle = "fill"> extends CanvasItem
+    export class Rectangle extends CanvasItem
     {
-        constructor(rect: Rect,readonly style: ModeStyle[M] = "black",readonly mode: M = "fill" as M)
+        constructor(rect: Rect,readonly style: Style = "black",readonly mode: Mode = "fill")
         {
             super(rect)
         }
@@ -84,9 +82,9 @@ namespace CanvasItem
             context.restore()
         }
     }
-    export class Text<M extends keyof ModeStyle = "fill"> extends CanvasItem
+    export class Text extends CanvasItem
     {
-        constructor(pos: Vector2,readonly text: string,readonly font: string = "monospace",height: number = 11,readonly mode: M = "fill" as M)
+        constructor(pos: Vector2,readonly text: string,readonly font: string = "monospace",height: number = 11,readonly mode: Mode = "fill")
         {
             super({...pos,width: 0,height})
         }
