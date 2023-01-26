@@ -1,6 +1,6 @@
 import Game from "../game"
 import CanvasItem from "../graphics/item"
-import { Size, Vector2 } from "../math"
+import { Rect, Size, Vector2 } from "../math"
 
 function default_GOptions(): NObject.GOptions
 {
@@ -38,6 +38,20 @@ class NObject
     process(game: Game)
     {
         
+    }
+    toCanvasItem(): CanvasItem | null
+    {
+        switch(this.gType)
+        {
+            default:
+            case "none":
+                return null
+            case "rectangle":
+                return new CanvasItem.Rectangle(
+                    Rect(this.position.x,this.position.y,this.size.width,this.size.height),
+                    this.gOptions.style,this.gOptions.mode
+                )
+        }
     }
 }
 

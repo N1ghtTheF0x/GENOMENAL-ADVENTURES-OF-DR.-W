@@ -1,4 +1,6 @@
 import { createBBos } from "../math"
+import Context from "./context"
+import CPUContext from "./cpu/context"
 import CanvasItem from "./item"
 
 function getCanvas()
@@ -38,22 +40,12 @@ function getContainer()
     return div
 }
 
-function getContext(html: HTMLCanvasElement)
-{
-    const context = html.getContext("2d")
-    if(context == null) throw new Error("2D Graphics are not available!")
-
-    context.imageSmoothingEnabled = false
-
-    return context
-}
-
 class Canvas
 {
     #div = getContainer()
     #canvas = getCanvas()
-    #context = getContext(this.#canvas)
     drawHitbox: boolean = false
+    context: Context
     get element() { return this.#canvas }
     get container() { return this.#div }
     constructor()
@@ -61,19 +53,18 @@ class Canvas
         this.#div.append(this.#canvas)
 
         document.body.appendChild(this.#div)
+
+        if(Canvas.checkContext("webgl2")) this.context = this.#init_gpu()
+        else if(Canvas.checkContext("2d")) this.context = this.#init_cpu()
+        else throw new Error("You PC cannot handle these Graphics!")
     }
-    draw(...items: CanvasItem[])
+    #init_cpu()
     {
-        for(const item of items)
-        {
-            if(!Canvas.inside(item)) continue
-            item.draw(this.#context)
-            if(this.drawHitbox) item.drawHitbox(this.#context)
-        }
+        return new CPUContext(this.#canvas)
     }
-    clear()
+    #init_gpu()
     {
-        this.#context.clearRect(0,0,Canvas.WIDTH,Canvas.HEIGHT)
+        return new CPUContext(this.#canvas)
     }
 }
 
@@ -93,6 +84,15 @@ namespace Canvas
 
         return left < bbox.left && right > bbox.right &&
                top < bbox.top && bottom > bbox.bottom
+    }
+
+    export function checkContext(type: "2d" | "webgl" | "webgl2")
+    {
+        const canvas = document.createElement("canvas")
+
+        const context = canvas.getContext(type)
+
+        return context != null
     }
 }
 
