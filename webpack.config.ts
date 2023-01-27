@@ -3,6 +3,9 @@ import { resolve } from "path"
 import { Configuration } from "webpack"
 import * as HtmlWebpackPlugin from "html-webpack-plugin"
 
+const TEXT_FILES = /\.(txt|frag|vert)$/
+const IMAGE_FILES = /\.(png|jpe?g)$/
+
 function configure(): Configuration
 {
     const config: Configuration = {
@@ -36,6 +39,20 @@ function configure(): Configuration
                         options: {
                             presets: ["@babel/preset-env","@babel/preset-typescript"]
                         }
+                    }
+                },
+                {
+                    test: IMAGE_FILES,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "images/[hash][ext][query]"
+                    }
+                },
+                {
+                    test: TEXT_FILES,
+                    type: "asset/source",
+                    generator: {
+                        filename: "text/[hash][ext][query]"
                     }
                 }
             ]
