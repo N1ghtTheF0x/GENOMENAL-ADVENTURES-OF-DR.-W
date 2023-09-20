@@ -1,65 +1,87 @@
-import { Vector2 } from "./math"
+export var playerUp = false
+export var playerDown = false
+export var playerRight = false
+export var playerLeft = false
+export var playerJump = 0
+export var playerEnter = false
 
-class Input
+export var debugCameraLeft = false
+export var debugCameraRight = false
+export var debugCameraUp = false
+export var debugCameraDown = false
+
+export var mouseX = 0
+export var mouseY = 0
+function handleInput(ev: KeyboardEvent,state: boolean)
 {
-    keyboard: Input.Keyboard = {}
-    mouse: Input.Mouse = [false,false,false,false,false]
-    mousePos: Vector2 = {x: 0,y: 0}
-    gamepads: ReturnType<Navigator["getGamepads"]> = []
-    constructor()
+    switch(ev.code)
     {
-        window.addEventListener("keydown",(ev) =>
-        {
-            ev.preventDefault()
-            this.keyboard[ev.key.toLowerCase()] = true
-        })
-        window.addEventListener("keyup",(ev) =>
-        {
-            ev.preventDefault()
-            this.keyboard[ev.key.toLowerCase()] = false
-        })
-        window.addEventListener("keypress",(ev) =>
-        {
-            ev.preventDefault()
-            this.keyboard[ev.key.toLowerCase()] = true
-        })
-        window.addEventListener("mousedown",(ev) =>
-        {
-            ev.preventDefault()
-            this.mouse[ev.button] = true
-        })
-        window.addEventListener("mouseup",(ev) =>
-        {
-            ev.preventDefault()
-            this.mouse[ev.button] = false
-        })
-        window.addEventListener("mousemove",(ev) =>
-        {
-            ev.preventDefault()
-            this.mousePos = {x: ev.x,y: ev.y}
-        })
-        window.addEventListener("contextmenu",(ev) => ev.preventDefault())
-    }
-    update()
-    {
-        this.gamepads = navigator.getGamepads()
+        case "KeyW":
+            playerUp = state
+            break
+        case "KeyS":
+            playerDown = state
+            break
+        case "KeyA":
+            playerLeft = state
+            break
+        case "KeyD":
+            playerRight = state
+            break
+        case "Space":
+            playerJump = state ? 1 : 0
+            break
+        case "Enter":
+            playerEnter = state
+            break
+        case "ArrowUp":
+            debugCameraUp = state
+            break
+        case "ArrowDown":
+            debugCameraDown = state
+            break
+        case "ArrowLeft":
+            debugCameraLeft = state
+            break
+        case "ArrowRight":
+            debugCameraRight = state
+            break
     }
 }
 
-namespace Input 
+export function setupInput()
 {
-    export type Keyboard = {[key: string]: boolean}
-    export type Mouse = [boolean,boolean,boolean,boolean,boolean]
-
-    export enum MouseButton
+    window.addEventListener("contextmenu",(ev) => ev.preventDefault())
+    window.addEventListener("keyup",(ev) =>
     {
-        Main,
-        Auxiliary,
-        Secondary,
-        Back,
-        Forward,
-        Count
-    }
-}
+        ev.preventDefault()
+        handleInput(ev,false)
+    })
+    window.addEventListener("keydown",(ev) =>
+    {
+        ev.preventDefault()
+        handleInput(ev,true)
+    })
+    window.addEventListener("mousemove",(ev) =>
+    {
+        ev.preventDefault()
+        mouseX += ev.movementX
+        mouseY += ev.movementY
+    })
+    setInterval(() =>
+    {
+        const gamepad = navigator.getGamepads()[0]
+        if(!gamepad) return
 
-export default Input
+        const dz = 0.5
+
+        playerJump = gamepad.buttons[0].value
+        playerEnter = gamepad.buttons[9].pressed
+
+        playerLeft = gamepad.axes[0] < -dz || gamepad.buttons[14].pressed
+        playerRight = gamepad.axes[0] > dz || gamepad.buttons[15].pressed
+
+        playerUp = gamepad.axes[1] < -dz || gamepad.buttons[12].pressed
+        playerDown = gamepad.axes[1] > dz || gamepad.buttons[13].pressed
+    })
+}
