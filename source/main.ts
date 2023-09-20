@@ -1,5 +1,5 @@
 import { canvas, clear, ctx, drawText, offset, setupCanvas, toggleCursor } from "./canvas"
-import { debugCameraDown, debugCameraLeft, debugCameraRight, debugCameraUp, mouseX, mouseY, playerDown, playerLeft, playerRight, playerUp, setupInput } from "./input"
+import { mouseX, mouseY, playerDown, playerLeft, playerRight, playerUp, setupInput } from "./input"
 import { Loop, createLoop } from "./loop"
 import { EObject } from "./object"
 import { options } from "./options"
